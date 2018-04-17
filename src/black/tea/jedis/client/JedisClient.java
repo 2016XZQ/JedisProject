@@ -1,8 +1,14 @@
 package black.tea.jedis.client;
 
 import org.junit.Test;
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JedisClient {
     @Test
@@ -27,5 +33,24 @@ public class JedisClient {
 
         jedis.close();
         jedisPool.close();
+    }
+    @Test
+    public void jedisCluster(){
+        Set<HostAndPort> nodes = new HashSet<>();
+        nodes.add(new HostAndPort("192.168.0.154",7001));
+        nodes.add(new HostAndPort("192.168.0.154",7002));
+        nodes.add(new HostAndPort("192.168.0.154",7003));
+        nodes.add(new HostAndPort("192.168.0.154",7004));
+        nodes.add(new HostAndPort("192.168.0.154",7005));
+        nodes.add(new HostAndPort("192.168.0.154",7006));
+        JedisCluster cluster = new JedisCluster(nodes);
+        cluster.set("k3","333");
+        String result = cluster.get("k3");
+        System.out.println(result);
+        try {
+            cluster.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
